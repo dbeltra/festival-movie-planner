@@ -143,7 +143,7 @@ button.danger:hover {
     left: 2px;
     right: 2px;
     top: 2px;
-    background: linear-gradient(135deg, #28a745, #20c997);
+    background: linear-gradient(135deg, #007bff, #0056b3);
     color: white;
     padding: 4px 6px;
     border-radius: 4px;
@@ -181,8 +181,15 @@ button.danger:hover {
 }
 
 .event-item.interested {
-    background: linear-gradient(135deg, #007bff, #0056b3) !important;
-    border: 2px solid #ffc107;
+    background: linear-gradient(135deg, #ffc107, #ffb300) !important;
+    border: 2px solid #fd7e14;
+    font-weight: bold;
+    color: #000;
+}
+
+.event-item.selected {
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+    border: 2px solid #17a2b8;
     font-weight: bold;
 }
 
@@ -262,6 +269,11 @@ button.danger:hover {
 .btn-interested {
     background: #ffc107;
     color: #000;
+}
+
+.btn-selected {
+    background: #28a745;
+    color: white;
 }
 
 .venue-header {

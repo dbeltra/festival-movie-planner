@@ -33,12 +33,15 @@ Since the app loads data via fetch API, you need to serve it from a web server (
 ### Running the Application
 
 1. **Using Python (recommended)**:
+
    ```bash
    python -m http.server 8000
    ```
+
    Then open http://localhost:8000
 
 2. **Using Node.js**:
+
    ```bash
    npx serve .
    ```
@@ -73,19 +76,38 @@ To use this planner for a different festival:
 ### Planning Your Festival
 
 1. **Browse Events**: Scroll through the schedule to see all available events
-2. **Mark Interests**: Click the ⭐ button on events you want to attend
-3. **Hide Events**: Click the ❌ button on events you're not interested in
-4. **Unhide Events**: Click the ❌ button again on hidden events to unhide them, or use "Show Hidden" to see all hidden events
-5. **Filter View**: Use "Show Only Interested" to see just your planned events, or "Show Hidden" to review hidden events
-6. **Export Plan**: Click "Export My Plan" to download your schedule
+2. **Mark Events**:
+   - Click ⭐ for events you're **interested** in (might attend)
+   - Click ✓ for events you've **selected** (definitely attending)
+   - Click ❌ to **hide** events you're not interested in
+3. **Manage Events**:
+   - Click buttons again to toggle states
+   - Use "Show Hidden" to review and unhide events
+4. **Filter Views**:
+   - "Show All" - See everything
+   - "Show Interested" - Only ⭐ events
+   - "Show Selected" - Only ✓ events
+   - "Show Hidden" - Review hidden events
+5. **Export Plan**: Download your interested and selected events
 
 ### Understanding the Interface
 
-- **Green Events**: Available events you haven't marked
-- **Blue Events with Gold Border**: Events you've marked as interested
+- **Blue Events**: Available events you haven't marked
+- **Yellow Events with Orange Border**: ⭐ Events you're interested in (might attend)
+- **Green Events with Teal Border**: ✓ Events you've selected (definitely attending)
 - **Purple Events**: Events with multiple movies
-- **Gray Events**: Hidden events (click "Show Hidden" to see them, then click ❌ to unhide)
+- **Gray Events**: ❌ Hidden events (use "Show Hidden" to manage them)
 - **Tooltips**: Hover over events for detailed information
+
+### Event States
+
+The planner supports three main states for better organization:
+
+1. **Interested (⭐)** - Events you might want to attend, need to decide
+2. **Selected (✓)** - Events you've committed to attending
+3. **Hidden (❌)** - Events you're not interested in
+
+Each event can only be in one state at a time. States are mutually exclusive to keep your planning clear and organized.
 
 ### Unhiding Events
 
@@ -100,6 +122,7 @@ You have several options to unhide events:
 ### Styling
 
 Edit `css/styles.css` to customize:
+
 - Colors and themes
 - Layout and spacing
 - Responsive breakpoints
@@ -108,6 +131,7 @@ Edit `css/styles.css` to customize:
 ### Functionality
 
 Edit `js/planner.js` to modify:
+
 - Data processing logic
 - Event filtering
 - Export format
@@ -116,6 +140,7 @@ Edit `js/planner.js` to modify:
 ### Data Format
 
 The schedule data supports:
+
 - Multiple movies per event
 - Special tags (presence, Q&A, etc.)
 - Festival sections/categories

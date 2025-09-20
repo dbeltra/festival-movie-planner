@@ -15,7 +15,8 @@
                 <h3 style="margin: 0; color: #007bff;">📋 Planning Tools</h3>
                 <div class="planning-controls">
                     <button onclick="showAllEvents()">👁️ Show All</button>
-                    <button onclick="showOnlyInterested()" class="secondary">⭐ Show Only Interested</button>
+                    <button onclick="showOnlyInterested()" class="secondary">⭐ Show Interested</button>
+                    <button onclick="showOnlySelected()" class="secondary">✓ Show Selected</button>
                     <button onclick="showHiddenEvents()" class="secondary">👻 Show Hidden</button>
                     <button onclick="exportMyPlan()">📤 Export My Plan</button>
                     <button onclick="window.print()" class="secondary">🖨️ Print</button>
@@ -25,18 +26,23 @@
                 <span>🎯 <strong>Planning Mode:</strong> Click events to mark as interested (⭐) or hide (❌)</span>
                 <div class="hidden-count" id="hiddenCount">Hidden: 0</div>
                 <div class="hidden-count" id="interestedCount" style="background: #fff3cd; color: #856404;">Interested: 0</div>
+                <div class="hidden-count" id="selectedCount" style="background: #d4edda; color: #155724;">Selected: 0</div>
                 <button onclick="unhideAllEvents()" class="secondary" style="font-size: 12px; padding: 4px 8px;">🔄 Unhide All</button>
             </div>
         </div>
         
         <div class="legend">
             <div class="legend-item">
-                <div class="legend-color" style="background: linear-gradient(135deg, #28a745, #20c997);"></div>
+                <div class="legend-color" style="background: linear-gradient(135deg, #007bff, #0056b3);"></div>
                 <span>Available Event</span>
             </div>
             <div class="legend-item">
-                <div class="legend-color" style="background: linear-gradient(135deg, #007bff, #0056b3); border: 2px solid #ffc107;"></div>
+                <div class="legend-color" style="background: linear-gradient(135deg, #ffc107, #ffb300); border: 2px solid #fd7e14;"></div>
                 <span>⭐ Interested</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(135deg, #28a745, #20c997); border: 2px solid #17a2b8;"></div>
+                <span>✓ Selected</span>
             </div>
             <div class="legend-item">
                 <div class="legend-color" style="background: linear-gradient(135deg, #6f42c1, #8e44ad);"></div>

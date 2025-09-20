@@ -1,6 +1,7 @@
 let parsedData = [];
 let hiddenEvents = new Set();
 let interestedEvents = new Set();
+let selectedEvents = new Set();
 
 // Load data from JSON file
 async function loadScheduleData() {
@@ -43,6 +44,7 @@ function saveUserPreferences() {
   const preferences = {
     hidden: Array.from(hiddenEvents),
     interested: Array.from(interestedEvents),
+    selected: Array.from(selectedEvents),
   };
   localStorage.setItem('festivalPlannerPrefs', JSON.stringify(preferences));
 }
@@ -54,6 +56,7 @@ function loadUserPreferences() {
       const preferences = JSON.parse(saved);
       hiddenEvents = new Set(preferences.hidden || []);
       interestedEvents = new Set(preferences.interested || []);
+      selectedEvents = new Set(preferences.selected || []);
       updateEventVisibility();
       updateCounts();
     }
@@ -71,7 +74,8 @@ function toggleEventHidden(eventId) {
     hiddenEvents.delete(eventId);
   } else {
     hiddenEvents.add(eventId);
-    interestedEvents.delete(eventId); // Can't be both
+    interestedEvents.delete(eventId); // Can't be interested and hidden
+    selectedEvents.delete(eventId); // Can't be selected and hidden
   }
   updateEventVisibility();
   updateCounts();
@@ -83,7 +87,21 @@ function toggleEventInterested(eventId) {
     interestedEvents.delete(eventId);
   } else {
     interestedEvents.add(eventId);
-    hiddenEvents.delete(eventId); // Can't be both
+    hiddenEvents.delete(eventId); // Can't be hidden and interested
+    selectedEvents.delete(eventId); // Can't be selected and interested
+  }
+  updateEventVisibility();
+  updateCounts();
+  saveUserPreferences();
+}
+
+function toggleEventSelected(eventId) {
+  if (selectedEvents.has(eventId)) {
+    selectedEvents.delete(eventId);
+  } else {
+    selectedEvents.add(eventId);
+    hiddenEvents.delete(eventId); // Can't be hidden and selected
+    interestedEvents.delete(eventId); // Can't be interested and selected
   }
   updateEventVisibility();
   updateCounts();
@@ -94,12 +112,14 @@ function updateEventVisibility() {
   document.querySelectorAll('.event-item').forEach((element) => {
     const eventId = element.getAttribute('data-event-id');
 
-    element.classList.remove('hidden', 'interested');
+    element.classList.remove('hidden', 'interested', 'selected');
 
     if (hiddenEvents.has(eventId)) {
       element.classList.add('hidden');
     } else if (interestedEvents.has(eventId)) {
       element.classList.add('interested');
+    } else if (selectedEvents.has(eventId)) {
+      element.classList.add('selected');
     }
   });
 }
@@ -111,6 +131,9 @@ function updateCounts() {
   document.getElementById(
     'interestedCount'
   ).textContent = `Interested: ${interestedEvents.size}`;
+  document.getElementById(
+    'selectedCount'
+  ).textContent = `Selected: ${selectedEvents.size}`;
 }
 
 function showAllEvents() {
@@ -123,6 +146,17 @@ function showOnlyInterested() {
   document.querySelectorAll('.event-item').forEach((element) => {
     const eventId = element.getAttribute('data-event-id');
     if (interestedEvents.has(eventId)) {
+      element.style.display = '';
+    } else {
+      element.style.display = 'none';
+    }
+  });
+}
+
+function showOnlySelected() {
+  document.querySelectorAll('.event-item').forEach((element) => {
+    const eventId = element.getAttribute('data-event-id');
+    if (selectedEvents.has(eventId)) {
       element.style.display = '';
     } else {
       element.style.display = 'none';
@@ -153,18 +187,49 @@ function unhideAllEvents() {
 }
 
 function exportMyPlan() {
-  const myEvents = parsedData.filter((event) =>
+  const interestedEventsData = parsedData.filter((event) =>
     interestedEvents.has(getEventId(event))
   );
+  const selectedEventsData = parsedData.filter((event) =>
+    selectedEvents.has(getEventId(event))
+  );
 
-  const planText = myEvents
-    .map((event) => {
-      const endTime = calculateEndTime(event.time, event.durationMinutes || 0);
-      return `${event.day} ${event.date} | ${event.time}-${endTime} | ${
-        event.venue
-      }\n${event.event}\n${event.movie || 'N/A'}\n---`;
-    })
-    .join('\n\n');
+  let planText = '';
+
+  if (interestedEventsData.length > 0) {
+    planText += '=== INTERESTED EVENTS ===\n\n';
+    planText += interestedEventsData
+      .map((event) => {
+        const endTime = calculateEndTime(
+          event.time,
+          event.durationMinutes || 0
+        );
+        return `${event.day} ${event.date} | ${event.time}-${endTime} | ${
+          event.venue
+        }\n${event.event}\n${event.movie || 'N/A'}\n---`;
+      })
+      .join('\n\n');
+  }
+
+  if (selectedEventsData.length > 0) {
+    if (planText) planText += '\n\n\n';
+    planText += '=== SELECTED EVENTS ===\n\n';
+    planText += selectedEventsData
+      .map((event) => {
+        const endTime = calculateEndTime(
+          event.time,
+          event.durationMinutes || 0
+        );
+        return `${event.day} ${event.date} | ${event.time}-${endTime} | ${
+          event.venue
+        }\n${event.event}\n${event.movie || 'N/A'}\n---`;
+      })
+      .join('\n\n');
+  }
+
+  if (!planText) {
+    planText = 'No events marked as interested or selected.';
+  }
 
   const blob = new Blob([planText], { type: 'text/plain' });
   const url = URL.createObjectURL(blob);
@@ -177,9 +242,10 @@ function exportMyPlan() {
   URL.revokeObjectURL(url);
 
   // Show success message
+  const totalEvents = interestedEventsData.length + selectedEventsData.length;
   const successMsg = document.createElement('div');
   successMsg.className = 'success';
-  successMsg.textContent = `✅ Exported ${myEvents.length} events to your plan!`;
+  successMsg.textContent = `✅ Exported ${totalEvents} events to your plan! (${interestedEventsData.length} interested, ${selectedEventsData.length} selected)`;
   document.querySelector('.controls-section').appendChild(successMsg);
   setTimeout(() => successMsg.remove(), 3000);
 }
@@ -372,6 +438,7 @@ function createCalendarGrid(events) {
                             }
                             <div class="event-controls">
                                 <button class="event-btn btn-interested" onclick="toggleEventInterested('${escapedEventId}')" title="Mark as interested">⭐</button>
+                                <button class="event-btn btn-selected" onclick="toggleEventSelected('${escapedEventId}')" title="Mark as selected">✓</button>
                                 <button class="event-btn btn-hide" onclick="toggleEventHidden('${escapedEventId}')" title="Hide/Unhide event">❌</button>
                             </div>
                         </div>
@@ -447,11 +514,19 @@ function hideTooltip() {
 
 function generateStats(events) {
   const visibleEvents = events.filter((e) => !hiddenEvents.has(getEventId(e)));
-  const myEvents = events.filter((e) => interestedEvents.has(getEventId(e)));
+  const interestedEventsData = events.filter((e) =>
+    interestedEvents.has(getEventId(e))
+  );
+  const selectedEventsData = events.filter((e) =>
+    selectedEvents.has(getEventId(e))
+  );
+  const myEvents = [...interestedEventsData, ...selectedEventsData];
 
   const stats = {
     totalEvents: events.length,
     visibleEvents: visibleEvents.length,
+    interestedEvents: interestedEventsData.length,
+    selectedEvents: selectedEventsData.length,
     myEvents: myEvents.length,
     totalDays: new Set(events.map((e) => `${e.day} ${e.date}`)).size,
     totalVenues: new Set(events.map((e) => e.venue).filter((v) => v)).size,
@@ -467,20 +542,24 @@ function generateStats(events) {
                 <div class="stat-label">Visible Events</div>
             </div>
             <div class="stat-item">
-                <div class="stat-number" style="color: #007bff;">${stats.myEvents}</div>
-                <div class="stat-label">⭐ My Plan</div>
+                <div class="stat-number" style="color: #007bff;">${stats.interestedEvents}</div>
+                <div class="stat-label">⭐ Interested</div>
             </div>
             <div class="stat-item">
-                <div class="stat-number" style="color: #28a745;">${stats.myHours}h</div>
+                <div class="stat-number" style="color: #28a745;">${stats.selectedEvents}</div>
+                <div class="stat-label">✓ Selected</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" style="color: #6f42c1;">${stats.myEvents}</div>
+                <div class="stat-label">Total Planned</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" style="color: #fd7e14;">${stats.myHours}h</div>
                 <div class="stat-label">My Festival Hours</div>
             </div>
             <div class="stat-item">
                 <div class="stat-number">${stats.totalDays}</div>
                 <div class="stat-label">Festival Days</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">${stats.totalVenues}</div>
-                <div class="stat-label">Venues</div>
             </div>
         </div>
     `;
