@@ -48,6 +48,38 @@ Since the app loads data via fetch API, you need to serve it from a web server (
 
 3. **Using any other web server** of your choice
 
+### Installing as a Mobile App (PWA)
+
+This app is a Progressive Web App that can be installed on your phone for offline use:
+
+#### Android:
+
+1. Open the app in Chrome browser
+2. Look for the "Install App" prompt at the top
+3. Tap "Install" or use Chrome's menu → "Add to Home Screen"
+4. The app will be added to your home screen and work offline
+
+#### iOS:
+
+1. Open the app in Safari
+2. Tap the Share button (square with arrow)
+3. Select "Add to Home Screen"
+4. Confirm to add the app icon
+
+#### Desktop:
+
+1. Open the app in Chrome, Edge, or Firefox
+2. Look for the install icon in the address bar
+3. Click to install as a desktop app
+
+### Offline Usage
+
+Once installed, the app works completely offline:
+
+- All your event preferences are saved locally
+- Schedule data is cached for offline viewing
+- Full functionality available without internet connection
+
 ### Updating the Schedule Data
 
 To use this planner for a different festival:

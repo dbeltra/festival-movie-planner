@@ -4,12 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Festival Schedule Planner</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="Plan your festival schedule with interactive event management">
+    <meta name="theme-color" content="#007bff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Festival Planner">
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Favicon and Apple Touch Icons -->
+    <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+    <link rel="apple-touch-icon" href="icons/icon.svg">
+    
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
     <div class="container">
         <h1>🎬 Festival Schedule Planner</h1>
         
+        <div id="installPrompt" class="controls-section" style="display: none; background: #d4edda; border-left-color: #28a745;">
+            <div class="controls-row">
+                <span>📱 <strong>Install App:</strong> Add this planner to your home screen for offline access!</span>
+                <button onclick="installApp()" style="background: #28a745;">📲 Install</button>
+                <button onclick="dismissInstallPrompt()" class="secondary" style="font-size: 12px; padding: 4px 8px;">✕</button>
+            </div>
+        </div>
+
         <div class="controls-section">
             <div class="controls-row">
                 <h3 style="margin: 0; color: #007bff;">📋 Planning Tools</h3>

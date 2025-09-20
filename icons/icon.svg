@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Background -->
+  <rect width="512" height="512" fill="#007bff" rx="64"/>
+  
+  <!-- Calendar icon -->
+  <rect x="96" y="128" width="320" height="256" fill="white" rx="16"/>
+  <rect x="96" y="128" width="320" height="64" fill="#0056b3" rx="16"/>
+  <rect x="96" y="176" width="320" height="16" fill="#0056b3"/>
+  
+  <!-- Calendar grid -->
+  <g fill="#007bff" opacity="0.7">
+    <rect x="128" y="208" width="32" height="24" rx="4"/>
+    <rect x="176" y="208" width="32" height="24" rx="4"/>
+    <rect x="224" y="208" width="32" height="24" rx="4"/>
+    <rect x="272" y="208" width="32" height="24" rx="4"/>
+    <rect x="320" y="208" width="32" height="24" rx="4"/>
+    
+    <rect x="128" y="248" width="32" height="24" rx="4"/>
+    <rect x="176" y="248" width="32" height="24" rx="4"/>
+    <rect x="224" y="248" width="32" height="24" rx="4"/>
+    <rect x="272" y="248" width="32" height="24" rx="4"/>
+    <rect x="320" y="248" width="32" height="24" rx="4"/>
+    
+    <rect x="128" y="288" width="32" height="24" rx="4"/>
+    <rect x="176" y="288" width="32" height="24" rx="4"/>
+    <rect x="224" y="288" width="32" height="24" rx="4"/>
+    <rect x="272" y="288" width="32" height="24" rx="4"/>
+    <rect x="320" y="288" width="32" height="24" rx="4"/>
+  </g>
+  
+  <!-- Star (interested) -->
+  <path d="M200 340 L208 356 L226 356 L212 368 L218 384 L200 372 L182 384 L188 368 L174 356 L192 356 Z" fill="#ffc107"/>
+  
+  <!-- Checkmark (selected) -->
+  <path d="M280 340 L290 350 L310 330 L320 340 L290 370 L270 350 Z" fill="#28a745"/>
+  
+  <!-- Film strip decoration -->
+  <rect x="64" y="96" width="384" height="8" fill="white" opacity="0.3"/>
+  <rect x="64" y="408" width="384" height="8" fill="white" opacity="0.3"/>
+</svg>
