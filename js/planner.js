@@ -24,8 +24,8 @@ async function loadScheduleData() {
 
     parsedData = data;
     document.getElementById('loading').style.display = 'none';
-    displayCalendar();
     loadUserPreferences();
+    displayCalendar();
   } catch (error) {
     console.error('Error loading schedule:', error);
     document.getElementById('loading').style.display = 'none';
@@ -125,15 +125,19 @@ function updateEventVisibility() {
 }
 
 function updateCounts() {
-  document.getElementById(
-    'hiddenCount'
-  ).textContent = `Hidden: ${hiddenEvents.size}`;
-  document.getElementById(
-    'interestedCount'
-  ).textContent = `Interested: ${interestedEvents.size}`;
-  document.getElementById(
-    'selectedCount'
-  ).textContent = `Selected: ${selectedEvents.size}`;
+  const hiddenCountEl = document.getElementById('hiddenCount');
+  const interestedCountEl = document.getElementById('interestedCount');
+  const selectedCountEl = document.getElementById('selectedCount');
+
+  if (hiddenCountEl) {
+    hiddenCountEl.textContent = `Hidden: ${hiddenEvents.size}`;
+  }
+  if (interestedCountEl) {
+    interestedCountEl.textContent = `Interested: ${interestedEvents.size}`;
+  }
+  if (selectedCountEl) {
+    selectedCountEl.textContent = `Selected: ${selectedEvents.size}`;
+  }
 }
 
 function showAllEvents() {
@@ -569,7 +573,8 @@ function displayCalendar() {
   document.getElementById('stats').innerHTML = generateStats(parsedData);
   document.getElementById('calendar').innerHTML =
     createCalendarGrid(parsedData);
-  updateCounts();
+  // Ensure counts are updated after everything is rendered
+  setTimeout(() => updateCounts(), 0);
 }
 
 // Initialize
