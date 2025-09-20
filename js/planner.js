@@ -254,7 +254,7 @@ function calculateEndTime(startTime, durationMinutes) {
   const [hours, minutes] = startTime.split(':').map(Number);
   const startMinutes = hours * 60 + minutes;
   const endMinutes = startMinutes + durationMinutes;
-  const endHours = Math.floor(endMinutes / 60);
+  const endHours = Math.floor(endMinutes / 60) % 24; // Handle 24-hour rollover
   const endMins = endMinutes % 60;
   return `${endHours.toString().padStart(2, '0')}:${endMins
     .toString()
@@ -267,7 +267,7 @@ function timeToMinutes(timeStr) {
 }
 
 function minutesToTime(minutes) {
-  const hours = Math.floor(minutes / 60);
+  const hours = Math.floor(minutes / 60) % 24; // Handle 24-hour rollover
   const mins = minutes % 60;
   return `${hours.toString().padStart(2, '0')}:${mins
     .toString()
