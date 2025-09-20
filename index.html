@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Festival Schedule Planner</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Festival Schedule Planner</h1>
+        
+        <div class="controls-section">
+            <div class="controls-row">
+                <h3 style="margin: 0; color: #007bff;">📋 Planning Tools</h3>
+                <div class="planning-controls">
+                    <button onclick="showAllEvents()">👁️ Show All</button>
+                    <button onclick="showOnlyInterested()" class="secondary">⭐ Show Only Interested</button>
+                    <button onclick="showHiddenEvents()" class="secondary">👻 Show Hidden</button>
+                    <button onclick="exportMyPlan()">📤 Export My Plan</button>
+                    <button onclick="window.print()" class="secondary">🖨️ Print</button>
+                </div>
+            </div>
+            <div class="controls-row">
+                <span>🎯 <strong>Planning Mode:</strong> Click events to mark as interested (⭐) or hide (❌)</span>
+                <div class="hidden-count" id="hiddenCount">Hidden: 0</div>
+                <div class="hidden-count" id="interestedCount" style="background: #fff3cd; color: #856404;">Interested: 0</div>
+                <button onclick="unhideAllEvents()" class="secondary" style="font-size: 12px; padding: 4px 8px;">🔄 Unhide All</button>
+            </div>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(135deg, #28a745, #20c997);"></div>
+                <span>Available Event</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(135deg, #007bff, #0056b3); border: 2px solid #ffc107;"></div>
+                <span>⭐ Interested</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(135deg, #6f42c1, #8e44ad);"></div>
+                <span>Multiple Movies</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #6c757d;"></div>
+                <span>❌ Hidden (click ❌ again to unhide)</span>
+            </div>
+        </div>
+        
+        <div id="loading" class="loading">
+            📡 Loading festival schedule...
+        </div>
+        
+        <div id="error" class="error" style="display: none;"></div>
+        
+        <div id="stats"></div>
+        <div id="calendar"></div>
+        <div class="tooltip" id="tooltip"></div>
+    </div>
+
+    <script src="js/planner.js"></script>
+</body>
+</html>
