@@ -52,13 +52,25 @@ function saveUserPreferences() {
 function loadUserPreferences() {
   try {
     const saved = localStorage.getItem('festivalPlannerPrefs');
+    console.log('Loading preferences, saved data:', saved);
     if (saved) {
       const preferences = JSON.parse(saved);
+      console.log('Parsed preferences:', preferences);
       hiddenEvents = new Set(preferences.hidden || []);
       interestedEvents = new Set(preferences.interested || []);
       selectedEvents = new Set(preferences.selected || []);
-      updateEventVisibility();
-      updateCounts();
+      console.log(
+        'Loaded preferences - Hidden:',
+        hiddenEvents.size,
+        'Interested:',
+        interestedEvents.size,
+        'Selected:',
+        selectedEvents.size
+      );
+      // Don't call updateEventVisibility here - DOM elements don't exist yet
+      // This will be called after displayCalendar() creates the elements
+    } else {
+      console.log('No saved preferences found');
     }
   } catch (error) {
     console.error('Error loading preferences:', error);
@@ -66,7 +78,9 @@ function loadUserPreferences() {
 }
 
 function getEventId(event) {
-  return `${event.event}-${event.time}-${event.venue}-${event.day}-${event.date}`;
+  const id = `${event.event}-${event.time}-${event.venue}-${event.day}-${event.date}`;
+  // console.log('Generated event ID:', id); // Uncomment for debugging
+  return id;
 }
 
 function toggleEventHidden(eventId) {
@@ -109,7 +123,9 @@ function toggleEventSelected(eventId) {
 }
 
 function updateEventVisibility() {
-  document.querySelectorAll('.event-item').forEach((element) => {
+  const eventItems = document.querySelectorAll('.event-item');
+
+  eventItems.forEach((element) => {
     const eventId = element.getAttribute('data-event-id');
 
     element.classList.remove('hidden', 'interested', 'selected');
@@ -573,8 +589,12 @@ function displayCalendar() {
   document.getElementById('stats').innerHTML = generateStats(parsedData);
   document.getElementById('calendar').innerHTML =
     createCalendarGrid(parsedData);
-  // Ensure counts are updated after everything is rendered
-  setTimeout(() => updateCounts(), 0);
+
+  // Apply saved preferences to the newly created DOM elements
+  setTimeout(() => {
+    updateEventVisibility();
+    updateCounts();
+  }, 0);
 }
 
 // PWA Install functionality
