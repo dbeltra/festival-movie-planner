@@ -1,4 +1,5 @@
-const CACHE_NAME = 'festival-planner-v2';
+const CACHE_VERSION = '2.1.0';
+const CACHE_NAME = `festival-planner-v${CACHE_VERSION}`;
 const urlsToCache = [
   '/',
   '/index.html',
@@ -33,15 +34,29 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Fetch event - serve from cache when offline
+// Handle skip waiting message
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
+// Fetch event - network first, cache fallback for better updates
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      // Return cached version or fetch from network
-      if (response) {
-        return response;
-      }
-      return fetch(event.request);
+    caches.open(CACHE_NAME).then((cache) => {
+      return fetch(event.request)
+        .then((fetchResponse) => {
+          // If we can fetch from network, update cache and return fresh content
+          if (fetchResponse.status === 200) {
+            cache.put(event.request, fetchResponse.clone());
+          }
+          return fetchResponse;
+        })
+        .catch(() => {
+          // If network fails, serve from cache
+          return caches.match(event.request);
+        });
     })
   );
 });

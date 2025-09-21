@@ -80,6 +80,31 @@ Once installed, the app works completely offline:
 - Schedule data is cached for offline viewing
 - Full functionality available without internet connection
 
+### Updating the App
+
+The app uses a service worker for offline functionality, which can cache updates. Here's how to handle updates:
+
+#### For Users:
+
+- The app will show an "Update Available" banner when a new version is ready
+- Click "Update Now" to get the latest version
+- Or force refresh with Ctrl+F5 (Cmd+Shift+R on Mac)
+
+#### For Developers:
+
+1. **Auto-increment version**: Run `node update-version.js` to bump version and update cache
+2. **Manual version update**: Edit `version.json` and update `CACHE_VERSION` in `sw.js`
+3. **Clear cache during development**:
+   - Open DevTools → Application → Storage → Clear Storage
+   - Or use incognito/private browsing mode
+
+#### Cache Strategy:
+
+- **Network First**: Always tries to fetch fresh content when online
+- **Cache Fallback**: Serves cached content when offline
+- **Auto-update**: Service worker updates cache in background
+- **Version-based**: Each version gets its own cache namespace
+
 ### Updating the Schedule Data
 
 To use this planner for a different festival:

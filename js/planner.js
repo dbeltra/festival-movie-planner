@@ -607,11 +607,67 @@ if ('serviceWorker' in navigator) {
       .register('/sw.js')
       .then((registration) => {
         console.log('SW registered: ', registration);
+
+        // Check for updates every time the page loads
+        registration.addEventListener('updatefound', () => {
+          const newWorker = registration.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (
+              newWorker.state === 'installed' &&
+              navigator.serviceWorker.controller
+            ) {
+              // New service worker is available, show update notification
+              showUpdateNotification();
+            }
+          });
+        });
+
+        // Check for updates immediately
+        registration.update();
       })
       .catch((registrationError) => {
         console.log('SW registration failed: ', registrationError);
       });
   });
+}
+
+function showUpdateNotification() {
+  const updateBanner = document.createElement('div');
+  updateBanner.className = 'controls-section';
+  updateBanner.style.background = '#fff3cd';
+  updateBanner.style.borderLeftColor = '#ffc107';
+  updateBanner.innerHTML = `
+    <div class="controls-row">
+      <span>🔄 <strong>Update Available:</strong> A new version of the app is ready!</span>
+      <button onclick="updateApp()" style="background: #ffc107; color: #000;">🔄 Update Now</button>
+      <button onclick="dismissUpdate()" class="secondary" style="font-size: 12px; padding: 4px 8px;">Later</button>
+    </div>
+  `;
+  updateBanner.id = 'updateBanner';
+  document
+    .querySelector('.container')
+    .insertBefore(
+      updateBanner,
+      document.querySelector('.container').firstChild
+    );
+}
+
+function updateApp() {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistration().then((registration) => {
+      if (registration && registration.waiting) {
+        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+        window.location.reload();
+      }
+    });
+  }
+}
+
+function dismissUpdate() {
+  const updateBanner = document.getElementById('updateBanner');
+  if (updateBanner) {
+    updateBanner.remove();
+  }
 }
 
 // Handle PWA install prompt
