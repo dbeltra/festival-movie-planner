@@ -860,7 +860,28 @@ function generateStats(events) {
 }
 
 function displayCalendar() {
-  document.getElementById('stats').innerHTML = generateStats(parsedData);
+  // Create collapsible stats section
+  const statsHtml = `
+    <div class="controls-section collapsible">
+      <div class="controls-header" onclick="toggleSection('stats')">
+        <h3 style="margin: 0; color: #303030ff;">📊 Statistics</h3>
+        <span class="collapse-icon rotated" id="stats-icon">
+          <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" fill="#000000">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+              <path fill="#5C5F62" d="M13.098 8H6.902c-.751 0-1.172.754-.708 1.268L9.292 12.7c.36.399 1.055.399 1.416 0l3.098-3.433C14.27 8.754 13.849 8 13.098 8Z"></path>
+            </g>
+          </svg>
+        </span>
+      </div>
+      <div class="collapsible-content collapsed" id="stats-content">
+        ${generateStats(parsedData)}
+      </div>
+    </div>
+  `;
+
+  document.getElementById('stats').innerHTML = statsHtml;
   document.getElementById('calendar').innerHTML =
     createCalendarGrid(parsedData);
 
@@ -979,4 +1000,28 @@ function dismissInstallPrompt() {
 // Initialize
 window.onload = function () {
   loadScheduleData();
+};
+
+// Collapsible sections functionality - must be global for onclick handlers
+window.toggleSection = function (sectionId) {
+  console.log('Toggling section:', sectionId); // Debug log
+  const content = document.getElementById(sectionId + '-content');
+  const icon = document.getElementById(sectionId + '-icon');
+
+  if (content && icon) {
+    if (content.classList.contains('collapsed')) {
+      content.classList.remove('collapsed');
+      icon.classList.remove('rotated');
+      console.log('Expanded section:', sectionId);
+    } else {
+      content.classList.add('collapsed');
+      icon.classList.add('rotated');
+      console.log('Collapsed section:', sectionId);
+    }
+  } else {
+    console.error('Could not find elements for section:', sectionId, {
+      content,
+      icon,
+    });
+  }
 };

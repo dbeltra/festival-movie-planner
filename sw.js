@@ -1,4 +1,4 @@
-const CACHE_VERSION = '2.1.2';
+const CACHE_VERSION = '2.1.8';
 const CACHE_NAME = `festival-planner-v${CACHE_VERSION}`;
 const urlsToCache = [
   '/',

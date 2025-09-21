@@ -98,13 +98,15 @@ button.danger:hover {
 .day-title {
     font-size: 24px;
     font-weight: bold;
-    color: #333;
+    color: white;
     margin-bottom: 15px;
     text-align: center;
-    background: #FF0042;
-    color: rgb(0, 0, 0);
+    background: red;
     padding: 10px;
-    border-radius: 8px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .schedule-table {
@@ -122,8 +124,16 @@ button.danger:hover {
     font-weight: bold;
     text-align: center;
     position: sticky;
-    top: 0;
-    z-index: 10;
+    top: 64px;
+    z-index: 50;
+}
+
+/* Ensure sticky works by making sure parent containers don't interfere */
+.schedule-table thead th {
+    position: sticky;
+    top: 45px;
+    z-index: 50;
+    background: #f8f9fa;
 }
 
 .schedule-table th.time-header {
@@ -400,6 +410,46 @@ button.danger:hover {
     font-size: 14px;
 }
 
+/* Collapsible sections */
+.collapsible .controls-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 10px 15px;
+    margin: -15px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+
+.collapsible .controls-header:hover {
+    background-color: rgba(0, 123, 255, 0.1);
+}
+
+.collapse-icon {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.3s ease;
+    user-select: none;
+    display: inline-block;
+}
+
+.collapse-icon.rotated {
+    transform: rotate(180deg);
+}
+
+.collapsible-content {
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+    max-height: 2000px;
+}
+
+.collapsible-content.collapsed {
+    max-height: 0;
+    transition: max-height 0.3s ease-in-out;
+}
+
 @media print {
     .controls-section, .legend, .stats { display: none; }
     .day-section { page-break-before: always; }
@@ -416,6 +466,11 @@ button.danger:hover {
     .schedule-table th {
         padding: 4px 2px;
         font-size: 9px;
+        top: 35px;
+    }
+    
+    .schedule-table thead th {
+        top: 35px;
     }
     
     .schedule-table td {
@@ -447,6 +502,12 @@ button.danger:hover {
     .controls-section {
         padding: 10px;
         margin-bottom: 15px;
+    }
+    
+    .collapsible .controls-header {
+        margin: -10px;
+        margin-bottom: 10px;
+        padding: 8px 10px;
     }
     
     .day-title {
