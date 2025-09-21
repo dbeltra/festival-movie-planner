@@ -34,7 +34,7 @@ body {
     background: #f8f9fa;
     padding: 15px;
     border-radius: 6px;
-    border-left: 4px solid #007bff;
+    border-left: 4px solid #FF0042;
 }
 
 .controls-row {
@@ -46,7 +46,7 @@ body {
 }
 
 button { 
-    background: #007bff; 
+    background: #FF0042; 
     color: white; 
     padding: 8px 16px; 
     border: none; 
@@ -56,7 +56,7 @@ button {
 }
 
 button:hover { 
-    background: #0056b3; 
+    background: #880606; 
 }
 
 button.secondary {
@@ -101,8 +101,8 @@ button.danger:hover {
     color: #333;
     margin-bottom: 15px;
     text-align: center;
-    background: linear-gradient(135deg, #007bff, #0056b3);
-    color: white;
+    background: #FF0042;
+    color: rgb(0, 0, 0);
     padding: 10px;
     border-radius: 8px;
 }
@@ -177,7 +177,7 @@ button.danger:hover {
     left: 2px;
     right: 2px;
     top: 2px;
-    background: linear-gradient(135deg, #007bff, #0056b3);
+    background: linear-gradient(135deg, #f44675, #e74c60);
     color: white;
     padding: 4px 6px;
     border-radius: 4px;
@@ -262,7 +262,7 @@ button.danger:hover {
 }
 
 .event-multi-movie {
-    background: linear-gradient(135deg, #6f42c1, #8e44ad);
+    background: linear-gradient(135deg, rgb(170, 40, 75), rgb(135, 28, 42));
 }
 
 .event-controls {
@@ -369,7 +369,7 @@ button.danger:hover {
 .stat-number {
     font-size: 24px;
     font-weight: bold;
-    color: #007bff;
+    color: #FF0042;
 }
 
 .stat-label {

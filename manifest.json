@@ -9,20 +9,50 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "icons/icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "icons/icon-192x192.png",
-      "sizes": "192x192",
+      "src": "icons/Assets.xcassets/AppIcon.appiconset/72.png",
+      "sizes": "72x72",
       "type": "image/png",
       "purpose": "maskable any"
     },
     {
-      "src": "icons/icon-512x512.png",
+      "src": "icons/Assets.xcassets/AppIcon.appiconset/128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icons/Assets.xcassets/AppIcon.appiconset/144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icons/Assets.xcassets/AppIcon.appiconset/152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icons/Assets.xcassets/AppIcon.appiconset/180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icons/Assets.xcassets/AppIcon.appiconset/196.png",
+      "sizes": "196x196",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icons/Assets.xcassets/AppIcon.appiconset/512.png",
       "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icons/Assets.xcassets/AppIcon.appiconset/1024.png",
+      "sizes": "1024x1024",
       "type": "image/png",
       "purpose": "maskable any"
     }

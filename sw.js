@@ -1,4 +1,4 @@
-const CACHE_NAME = 'festival-planner-v1';
+const CACHE_NAME = 'festival-planner-v2';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -6,6 +6,21 @@ const urlsToCache = [
   '/js/planner.js',
   '/data/schedule.json',
   '/manifest.json',
+  '/icons/Assets.xcassets/AppIcon.appiconset/16.png',
+  '/icons/Assets.xcassets/AppIcon.appiconset/32.png',
+  '/icons/Assets.xcassets/AppIcon.appiconset/57.png',
+  '/icons/Assets.xcassets/AppIcon.appiconset/60.png',
+  '/icons/Assets.xcassets/AppIcon.appiconset/72.png',
+  '/icons/Assets.xcassets/AppIcon.appiconset/76.png',
+  '/icons/Assets.xcassets/AppIcon.appiconset/114.png',
+  '/icons/Assets.xcassets/AppIcon.appiconset/120.png',
+  '/icons/Assets.xcassets/AppIcon.appiconset/128.png',
+  '/icons/Assets.xcassets/AppIcon.appiconset/144.png',
+  '/icons/Assets.xcassets/AppIcon.appiconset/152.png',
+  '/icons/Assets.xcassets/AppIcon.appiconset/180.png',
+  '/icons/Assets.xcassets/AppIcon.appiconset/196.png',
+  '/icons/Assets.xcassets/AppIcon.appiconset/512.png',
+  '/icons/Assets.xcassets/AppIcon.appiconset/1024.png',
 ];
 
 // Install event - cache resources
