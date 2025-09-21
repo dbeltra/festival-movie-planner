@@ -1,5 +1,5 @@
 {
-  "version": "2.1.1",
+  "version": "2.1.2",
   "buildDate": "2025-09-21",
-  "description": "Added import/export functionality with full hidden events support"
+  "description": "Improved time grid with regular 15-minute intervals (00, 15, 30, 45)"
 }

@@ -544,21 +544,42 @@ function minutesToTime(minutes) {
 }
 
 function generateTimeSlots(events) {
-  const allTimes = new Set();
+  // Find the earliest and latest times for the day
+  let earliestTime = 24 * 60; // Start with end of day
+  let latestTime = 0; // Start with beginning of day
 
   events.forEach((event) => {
     if (event.time && event.durationMinutes) {
       const startMinutes = timeToMinutes(event.time);
       const endMinutes = startMinutes + event.durationMinutes;
 
-      for (let t = startMinutes; t < endMinutes; t += 15) {
-        allTimes.add(t);
-      }
-      allTimes.add(endMinutes);
+      earliestTime = Math.min(earliestTime, startMinutes);
+      latestTime = Math.max(latestTime, endMinutes);
     }
   });
 
-  return Array.from(allTimes).sort((a, b) => a - b);
+  // If no events found, return empty array
+  if (earliestTime === 24 * 60) {
+    return [];
+  }
+
+  // Round down earliest time to nearest 15-minute mark
+  const startHour = Math.floor(earliestTime / 60);
+  const startMinute = Math.floor((earliestTime % 60) / 15) * 15;
+  const roundedEarliestTime = startHour * 60 + startMinute;
+
+  // Round up latest time to nearest 15-minute mark
+  const endHour = Math.floor(latestTime / 60);
+  const endMinute = Math.ceil((latestTime % 60) / 15) * 15;
+  const roundedLatestTime = endHour * 60 + (endMinute >= 60 ? 60 : endMinute);
+
+  // Generate regular 15-minute intervals
+  const timeSlots = [];
+  for (let time = roundedEarliestTime; time <= roundedLatestTime; time += 15) {
+    timeSlots.push(time);
+  }
+
+  return timeSlots;
 }
 
 function createCalendarGrid(events) {
@@ -634,9 +655,13 @@ function createCalendarGrid(events) {
         const startMinutes = timeToMinutes(event.time);
         const endMinutes = startMinutes + event.durationMinutes;
 
+        // Find the time slot where this event should be placed
+        // Place it in the slot that contains or comes after the event start time
         const startSlot =
-          timeSlots.find((slot) => slot >= startMinutes) || startMinutes;
-        grid[startSlot][event.venue] = event;
+          timeSlots.find((slot) => slot >= startMinutes) || timeSlots[0];
+        if (startSlot !== undefined) {
+          grid[startSlot][event.venue] = event;
+        }
 
         timeSlots.forEach((slot) => {
           if (slot >= startMinutes && slot < endMinutes) {
@@ -656,9 +681,9 @@ function createCalendarGrid(events) {
         if (event) {
           const eventStartMinutes = timeToMinutes(event.time);
           const eventEndMinutes = eventStartMinutes + event.durationMinutes;
-          const slotsSpanned = timeSlots.filter(
-            (slot) => slot >= eventStartMinutes && slot < eventEndMinutes
-          ).length;
+          // Calculate how many 15-minute slots this event spans
+          const eventDurationMinutes = event.durationMinutes || 0;
+          const slotsSpanned = Math.ceil(eventDurationMinutes / 15);
 
           const isMultiMovie = event.movies && event.movies.length > 1;
 
