@@ -145,7 +145,10 @@ To use this planner for a different festival:
    - "Show Interested" - Only ⭐ events
    - "Show Selected" - Only ✓ events
    - "Show Hidden" - Review hidden events
-5. **Export Plan**: Download your interested and selected events
+5. **Export/Import Plans**:
+   - Export your plan as text or JSON
+   - Import previously exported plans
+   - Share plans with others
 
 ### Understanding the Interface
 
@@ -165,6 +168,61 @@ The planner supports three main states for better organization:
 3. **Hidden (❌)** - Events you're not interested in
 
 Each event can only be in one state at a time. States are mutually exclusive to keep your planning clear and organized.
+
+### Import/Export Plans
+
+The planner supports importing and exporting your event selections:
+
+#### Export Options:
+
+- **📤 Export Text** - Human-readable format with event details
+- **📤 JSON** - Structured format for easy re-importing
+
+#### Import Support:
+
+- **📥 Import Plan** - Accepts both text (.txt) and JSON (.json) files
+- **Automatic detection** - Recognizes file format automatically
+- **Safe replacement** - Shows what was imported vs. replaced
+
+#### Use Cases:
+
+- **Backup your plans** - Export before making major changes
+- **Share with friends** - Send your plan to others
+- **Multiple scenarios** - Create different planning versions
+- **Device sync** - Move plans between devices
+
+#### File Formats:
+
+**Text Export (.txt):**
+
+```
+=== INTERESTED EVENTS ===
+Thursday 9 | 08:30-10:15 | Cinema Escorxador
+The Infinite Husk
+---
+
+=== SELECTED EVENTS ===
+Thursday 9 | 12:15-14:22 | Sala Auditori Meliá
+Alpha
+---
+
+=== HIDDEN EVENTS ===
+Thursday 9 | 16:30-18:06 | Sala Tramuntana Meliá
+La virgen de la tosquera
+---
+```
+
+**JSON Export (.json):**
+
+```json
+{
+  "version": "1.0",
+  "exportDate": "2024-09-21T10:30:00.000Z",
+  "interested": ["Event1-08:30-Venue1-Thursday-9"],
+  "selected": ["Event2-12:15-Venue2-Thursday-9"],
+  "hidden": ["Event3-15:00-Venue3-Thursday-9"]
+}
+```
 
 ### Unhiding Events
 

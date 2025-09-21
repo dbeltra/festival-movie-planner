@@ -213,6 +213,9 @@ function exportMyPlan() {
   const selectedEventsData = parsedData.filter((event) =>
     selectedEvents.has(getEventId(event))
   );
+  const hiddenEventsData = parsedData.filter((event) =>
+    hiddenEvents.has(getEventId(event))
+  );
 
   let planText = '';
 
@@ -247,8 +250,24 @@ function exportMyPlan() {
       .join('\n\n');
   }
 
+  if (hiddenEventsData.length > 0) {
+    if (planText) planText += '\n\n\n';
+    planText += '=== HIDDEN EVENTS ===\n\n';
+    planText += hiddenEventsData
+      .map((event) => {
+        const endTime = calculateEndTime(
+          event.time,
+          event.durationMinutes || 0
+        );
+        return `${event.day} ${event.date} | ${event.time}-${endTime} | ${
+          event.venue
+        }\n${event.event}\n${event.movie || 'N/A'}\n---`;
+      })
+      .join('\n\n');
+  }
+
   if (!planText) {
-    planText = 'No events marked as interested or selected.';
+    planText = 'No events marked as interested, selected, or hidden.';
   }
 
   const blob = new Blob([planText], { type: 'text/plain' });
@@ -262,12 +281,242 @@ function exportMyPlan() {
   URL.revokeObjectURL(url);
 
   // Show success message
-  const totalEvents = interestedEventsData.length + selectedEventsData.length;
+  const totalEvents =
+    interestedEventsData.length +
+    selectedEventsData.length +
+    hiddenEventsData.length;
   const successMsg = document.createElement('div');
   successMsg.className = 'success';
-  successMsg.textContent = `✅ Exported ${totalEvents} events to your plan! (${interestedEventsData.length} interested, ${selectedEventsData.length} selected)`;
+  successMsg.textContent = `✅ Exported ${totalEvents} events to your plan! (${interestedEventsData.length} interested, ${selectedEventsData.length} selected, ${hiddenEventsData.length} hidden)`;
   document.querySelector('.controls-section').appendChild(successMsg);
   setTimeout(() => successMsg.remove(), 3000);
+}
+
+function exportMyPlanJSON() {
+  const exportData = {
+    version: '1.0',
+    exportDate: new Date().toISOString(),
+    interested: Array.from(interestedEvents),
+    selected: Array.from(selectedEvents),
+    hidden: Array.from(hiddenEvents),
+  };
+
+  const jsonString = JSON.stringify(exportData, null, 2);
+  const blob = new Blob([jsonString], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'festival-plan.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  // Show success message
+  const totalEvents = interestedEvents.size + selectedEvents.size;
+  const successMsg = document.createElement('div');
+  successMsg.className = 'success';
+  successMsg.textContent = `✅ Exported ${totalEvents} events as JSON! (${interestedEvents.size} interested, ${selectedEvents.size} selected, ${hiddenEvents.size} hidden)`;
+  document.querySelector('.controls-section').appendChild(successMsg);
+  setTimeout(() => successMsg.remove(), 3000);
+}
+
+function importMyPlan() {
+  const fileInput = document.getElementById('importFileInput');
+  fileInput.click();
+}
+
+function handleImportFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    try {
+      const content = e.target.result;
+
+      // Determine file type and parse accordingly
+      if (file.name.endsWith('.json')) {
+        parseImportedJSON(content);
+      } else {
+        parseImportedPlan(content);
+      }
+    } catch (error) {
+      showImportError('Error reading file: ' + error.message);
+    }
+  };
+  reader.readAsText(file);
+
+  // Reset file input so same file can be imported again
+  event.target.value = '';
+}
+
+function parseImportedPlan(content) {
+  try {
+    // Clear current selections
+    const previousInterested = interestedEvents.size;
+    const previousSelected = selectedEvents.size;
+    const previousHidden = hiddenEvents.size;
+
+    interestedEvents.clear();
+    selectedEvents.clear();
+    hiddenEvents.clear();
+
+    // Parse the exported format
+    const sections = content.split('=== ');
+    let importedInterested = 0;
+    let importedSelected = 0;
+    let importedHidden = 0;
+
+    sections.forEach((section) => {
+      if (section.startsWith('INTERESTED EVENTS ===')) {
+        const events = parseEventSection(section, 'interested');
+        importedInterested = events.length;
+      } else if (section.startsWith('SELECTED EVENTS ===')) {
+        const events = parseEventSection(section, 'selected');
+        importedSelected = events.length;
+      } else if (section.startsWith('HIDDEN EVENTS ===')) {
+        const events = parseEventSection(section, 'hidden');
+        importedHidden = events.length;
+      }
+    });
+
+    // Update UI
+    updateEventVisibility();
+    updateCounts();
+    saveUserPreferences();
+
+    // Show success message
+    const successMsg = document.createElement('div');
+    successMsg.className = 'success';
+    successMsg.innerHTML = `
+      ✅ Plan imported successfully!<br>
+      📥 Imported: ${importedInterested} interested, ${importedSelected} selected, ${importedHidden} hidden<br>
+      🔄 Replaced: ${previousInterested} interested, ${previousSelected} selected, ${previousHidden} hidden
+    `;
+    document.querySelector('.controls-section').appendChild(successMsg);
+    setTimeout(() => successMsg.remove(), 5000);
+  } catch (error) {
+    showImportError('Error parsing plan: ' + error.message);
+  }
+}
+
+function parseImportedJSON(content) {
+  try {
+    const data = JSON.parse(content);
+
+    // Validate JSON structure
+    if (!data.version || (!data.interested && !data.selected)) {
+      throw new Error('Invalid JSON format. Expected festival plan export.');
+    }
+
+    // Clear current selections
+    const previousInterested = interestedEvents.size;
+    const previousSelected = selectedEvents.size;
+    const previousHidden = hiddenEvents.size;
+
+    interestedEvents.clear();
+    selectedEvents.clear();
+    hiddenEvents.clear();
+
+    // Import data
+    if (data.interested) {
+      data.interested.forEach((eventId) => interestedEvents.add(eventId));
+    }
+    if (data.selected) {
+      data.selected.forEach((eventId) => selectedEvents.add(eventId));
+    }
+    if (data.hidden) {
+      data.hidden.forEach((eventId) => hiddenEvents.add(eventId));
+    }
+
+    // Update UI
+    updateEventVisibility();
+    updateCounts();
+    saveUserPreferences();
+
+    // Show success message
+    const successMsg = document.createElement('div');
+    successMsg.className = 'success';
+    successMsg.innerHTML = `
+      ✅ JSON plan imported successfully!<br>
+      📥 Imported: ${interestedEvents.size} interested, ${selectedEvents.size} selected, ${hiddenEvents.size} hidden<br>
+      🔄 Replaced: ${previousInterested} interested, ${previousSelected} selected, ${previousHidden} hidden
+    `;
+    document.querySelector('.controls-section').appendChild(successMsg);
+    setTimeout(() => successMsg.remove(), 5000);
+  } catch (error) {
+    showImportError('Invalid JSON format: ' + error.message);
+  }
+}
+
+function parseEventSection(section, type) {
+  const events = [];
+  const lines = section.split('\n');
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+
+    // Look for event lines in format: "Day Date | Time-Time | Venue"
+    if (line.includes(' | ') && line.includes('-') && !line.startsWith('===')) {
+      const parts = line.split(' | ');
+      if (parts.length >= 3) {
+        const dayDate = parts[0].trim();
+        const timeRange = parts[1].trim();
+        const venue = parts[2].trim();
+
+        // Extract day and date
+        const dayDateParts = dayDate.split(' ');
+        if (dayDateParts.length >= 2) {
+          const day = dayDateParts[0];
+          const date = dayDateParts[1];
+          const startTime = timeRange.split('-')[0];
+
+          // Get event name from next line
+          if (i + 1 < lines.length) {
+            const eventName = lines[i + 1].trim();
+            if (
+              eventName &&
+              eventName !== '---' &&
+              !eventName.startsWith('===')
+            ) {
+              // Find matching event in parsed data
+              const matchingEvent = parsedData.find(
+                (event) =>
+                  event.day === day &&
+                  event.date.toString() === date &&
+                  event.time === startTime &&
+                  event.venue === venue &&
+                  event.event === eventName
+              );
+
+              if (matchingEvent) {
+                const eventId = getEventId(matchingEvent);
+                if (type === 'interested') {
+                  interestedEvents.add(eventId);
+                } else if (type === 'selected') {
+                  selectedEvents.add(eventId);
+                } else if (type === 'hidden') {
+                  hiddenEvents.add(eventId);
+                }
+                events.push(matchingEvent);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return events;
+}
+
+function showImportError(message) {
+  const errorMsg = document.createElement('div');
+  errorMsg.className = 'error';
+  errorMsg.innerHTML = `❌ Import failed: ${message}`;
+  document.querySelector('.controls-section').appendChild(errorMsg);
+  setTimeout(() => errorMsg.remove(), 5000);
 }
 
 function calculateEndTime(startTime, durationMinutes) {

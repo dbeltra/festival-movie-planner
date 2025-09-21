@@ -50,7 +50,11 @@
                     <button onclick="showOnlyInterested()" class="secondary">⭐ Show Interested</button>
                     <button onclick="showOnlySelected()" class="secondary">✓ Show Selected</button>
                     <button onclick="showHiddenEvents()" class="secondary">👻 Show Hidden</button>
-                    <button onclick="exportMyPlan()">📤 Export My Plan</button>
+                    <div style="display: inline-flex; gap: 5px;">
+                        <button onclick="exportMyPlan()">📤 Export Text</button>
+                        <button onclick="exportMyPlanJSON()" class="secondary" style="font-size: 12px; padding: 6px 10px;">📤 JSON</button>
+                    </div>
+                    <button onclick="importMyPlan()" class="secondary">📥 Import Plan</button>
                     <button onclick="window.print()" class="secondary">🖨️ Print</button>
                 </div>
             </div>
@@ -95,6 +99,9 @@
         <div id="stats"></div>
         <div id="calendar"></div>
         <div class="tooltip" id="tooltip"></div>
+        
+        <!-- Hidden file input for import -->
+        <input type="file" id="importFileInput" accept=".txt,.json" style="display: none;" onchange="handleImportFile(event)">
     </div>
 
     <script src="js/planner.js"></script>
