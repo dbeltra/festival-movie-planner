@@ -184,21 +184,6 @@ function showOnlySelected() {
   });
 }
 
-function showHiddenEvents() {
-  // Make hidden events visible but keep them styled as hidden
-  document.querySelectorAll('.event-item.hidden').forEach((element) => {
-    element.style.display = '';
-    element.style.setProperty('pointer-events', 'auto', 'important'); // Re-enable interactions
-
-    // Also ensure the controls are visible and clickable
-    const controls = element.querySelector('.event-controls');
-    if (controls) {
-      controls.style.display = 'flex';
-      controls.style.setProperty('pointer-events', 'auto', 'important');
-    }
-  });
-}
-
 function unhideAllEvents() {
   hiddenEvents.clear();
   updateEventVisibility();
@@ -288,35 +273,6 @@ function exportMyPlan() {
   const successMsg = document.createElement('div');
   successMsg.className = 'success';
   successMsg.textContent = `✅ Exported ${totalEvents} events to your plan! (${interestedEventsData.length} interested, ${selectedEventsData.length} selected, ${hiddenEventsData.length} hidden)`;
-  document.querySelector('.controls-section').appendChild(successMsg);
-  setTimeout(() => successMsg.remove(), 3000);
-}
-
-function exportMyPlanJSON() {
-  const exportData = {
-    version: '1.0',
-    exportDate: new Date().toISOString(),
-    interested: Array.from(interestedEvents),
-    selected: Array.from(selectedEvents),
-    hidden: Array.from(hiddenEvents),
-  };
-
-  const jsonString = JSON.stringify(exportData, null, 2);
-  const blob = new Blob([jsonString], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'festival-plan.json';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-
-  // Show success message
-  const totalEvents = interestedEvents.size + selectedEvents.size;
-  const successMsg = document.createElement('div');
-  successMsg.className = 'success';
-  successMsg.textContent = `✅ Exported ${totalEvents} events as JSON! (${interestedEvents.size} interested, ${selectedEvents.size} selected, ${hiddenEvents.size} hidden)`;
   document.querySelector('.controls-section').appendChild(successMsg);
   setTimeout(() => successMsg.remove(), 3000);
 }
@@ -825,7 +781,8 @@ function generateStats(events) {
     totalDays: new Set(events.map((e) => `${e.day} ${e.date}`)).size,
     totalVenues: new Set(events.map((e) => e.venue).filter((v) => v)).size,
     myHours: Math.round(
-      myEvents.reduce((sum, e) => sum + (e.durationMinutes || 0), 0) / 60
+      selectedEventsData.reduce((sum, e) => sum + (e.durationMinutes || 0), 0) /
+        60
     ),
   };
 
@@ -837,11 +794,11 @@ function generateStats(events) {
             </div>
             <div class="stat-item">
                 <div class="stat-number" style="color: #007bff;">${stats.interestedEvents}</div>
-                <div class="stat-label">⭐ Interested</div>
+                <div class="stat-label">Interested</div>
             </div>
             <div class="stat-item">
                 <div class="stat-number" style="color: #28a745;">${stats.selectedEvents}</div>
-                <div class="stat-label">✓ Selected</div>
+                <div class="stat-label">Selected</div>
             </div>
             <div class="stat-item">
                 <div class="stat-number" style="color: #6f42c1;">${stats.myEvents}</div>
@@ -995,6 +952,149 @@ function installApp() {
 function dismissInstallPrompt() {
   document.getElementById('installPrompt').style.display = 'none';
   deferredPrompt = null;
+}
+
+// List view functionality
+let isListView = false;
+
+function toggleListView() {
+  isListView = !isListView;
+  const btn = document.getElementById('listViewBtn');
+  const calendar = document.getElementById('calendar');
+
+  if (isListView) {
+    btn.textContent = '📅 Grid View';
+    btn.classList.remove('secondary');
+    calendar.innerHTML = generateListView();
+  } else {
+    btn.textContent = '📋 List View';
+    btn.classList.add('secondary');
+    calendar.innerHTML = createCalendarGrid(parsedData);
+    // Reapply event visibility after switching back to grid
+    setTimeout(() => {
+      updateEventVisibility();
+    }, 0);
+  }
+}
+
+function generateListView() {
+  const selectedEventsData = parsedData.filter((event) =>
+    selectedEvents.has(getEventId(event))
+  );
+
+  if (selectedEventsData.length === 0) {
+    return `
+      <div class="list-view-empty">
+        <h3>📋 My Selected Events</h3>
+        <p>No events selected yet. Use the ✓ button on events to add them to your list.</p>
+        <button onclick="toggleListView()" class="secondary">← Back to Grid View</button>
+      </div>
+    `;
+  }
+
+  // Group events by day
+  const eventsByDay = {};
+  selectedEventsData.forEach((event) => {
+    const dayKey = `${event.day} ${event.date}`;
+    if (!eventsByDay[dayKey]) {
+      eventsByDay[dayKey] = [];
+    }
+    eventsByDay[dayKey].push(event);
+  });
+
+  // Sort days chronologically
+  const sortedDayKeys = Object.keys(eventsByDay).sort((a, b) => {
+    const dateA = parseInt(a.split(' ')[1]);
+    const dateB = parseInt(b.split(' ')[1]);
+    return dateA - dateB;
+  });
+
+  const dayMap = {
+    Dilluns: 'Monday',
+    Dimarts: 'Tuesday',
+    Dimecres: 'Wednesday',
+    Dijous: 'Thursday',
+    Divendres: 'Friday',
+    Dissabte: 'Saturday',
+    Diumenge: 'Sunday',
+  };
+
+  let html = `
+    <div class="list-view">
+      <div class="list-view-header">
+        <h2>📋 My Selected Events (${selectedEventsData.length})</h2>
+        <button onclick="toggleListView()" class="secondary">← Back to Grid View</button>
+      </div>
+  `;
+
+  sortedDayKeys.forEach((dayKey) => {
+    const dayEvents = eventsByDay[dayKey].sort((a, b) => {
+      return timeToMinutes(a.time) - timeToMinutes(b.time);
+    });
+
+    const dayInfo = dayKey.split(' ');
+    const dayName = dayMap[dayInfo[0]] || dayInfo[0];
+    const dayNumber = dayInfo[1];
+
+    html += `
+      <div class="list-day-section">
+        <h3 class="list-day-title">${dayName}, ${dayNumber}</h3>
+        <div class="list-events">
+    `;
+
+    dayEvents.forEach((event) => {
+      const endTime = calculateEndTime(event.time, event.durationMinutes || 0);
+      const eventId = getEventId(event);
+      const escapedEventId = eventId.replace(/'/g, "\\'").replace(/"/g, '\\"');
+
+      html += `
+        <div class="list-event-item">
+          <div class="list-event-time">
+            <div class="list-time-range">${event.time} - ${endTime}</div>
+            <div class="list-duration">${event.duration || ''}</div>
+          </div>
+          <div class="list-event-details">
+            <div class="list-event-title">${event.event}</div>
+            <div class="list-event-venue">📍 ${event.venue}</div>
+            ${
+              event.movie
+                ? `<div class="list-event-movie">🎬 ${event.movie}</div>`
+                : ''
+            }
+            ${
+              event.movies && event.movies.length > 1
+                ? `<div class="list-event-movies">🎬 ${
+                    event.movies.length
+                  } movies: ${event.movies.join(', ')}</div>`
+                : ''
+            }
+            ${
+              event.sections && event.sections.length > 0
+                ? `<div class="list-event-sections">🏷️ ${event.sections.join(
+                    ', '
+                  )}</div>`
+                : ''
+            }
+            ${
+              event.special_tags && event.special_tags.length > 0
+                ? `<div class="list-event-tags">⭐ ${event.special_tags.join(
+                    ', '
+                  )}</div>`
+                : ''
+            }
+          </div>
+        </div>
+      `;
+    });
+
+    html += `
+        </div>
+      </div>
+    `;
+  });
+
+  html += `</div>`;
+  return html;
 }
 
 // Initialize

@@ -416,8 +416,8 @@ button.danger:hover {
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
-    padding: 10px 15px;
-    margin: -15px;
+    padding: 5px;
+    margin: 0px;
     margin-bottom: 15px;
     border-radius: 6px;
     transition: background-color 0.2s;
@@ -450,11 +450,160 @@ button.danger:hover {
     transition: max-height 0.3s ease-in-out;
 }
 
+/* List View Styles */
+.list-view {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.list-view-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: #f8f9fa;
+    border-bottom: 2px solid #FF0042;
+    margin-bottom: 20px;
+}
+
+.list-view-header h2 {
+    margin: 0;
+    color: #FF0042;
+}
+
+.list-view-empty {
+    text-align: center;
+    padding: 60px 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    color: #666;
+}
+
+.list-view-empty h3 {
+    color: #FF0042;
+    margin-bottom: 15px;
+}
+
+.list-day-section {
+    margin-bottom: 30px;
+}
+
+.list-day-title {
+    background: #FF0042;
+    color: white;
+    padding: 12px 20px;
+    margin: 0 0 15px 0;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.list-events {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 0 20px;
+}
+
+.list-event-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #28a745;
+    transition: all 0.2s;
+}
+
+.list-event-item:hover {
+    background: #e9ecef;
+    transform: translateX(5px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.list-event-time {
+    min-width: 120px;
+    text-align: center;
+    background: white;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+}
+
+.list-time-range {
+    font-weight: bold;
+    color: #FF0042;
+    font-size: 14px;
+}
+
+.list-duration {
+    font-size: 12px;
+    color: #666;
+    margin-top: 4px;
+}
+
+.list-event-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.list-event-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+}
+
+.list-event-venue {
+    color: #666;
+    font-size: 14px;
+}
+
+.list-event-movie {
+    color: #007bff;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.list-event-movies {
+    color: #007bff;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.list-event-sections {
+    color: #6f42c1;
+    font-size: 13px;
+}
+
+.list-event-tags {
+    color: #fd7e14;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.list-event-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 40px;
+}
+
+.list-event-actions .event-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+}
+
 @media print {
     .controls-section, .legend, .stats { display: none; }
     .day-section { page-break-before: always; }
     .day-section:first-child { page-break-before: auto; }
     .event-controls { display: none !important; }
+    .list-event-actions { display: none !important; }
+    .list-view-header button { display: none !important; }
 }
 
 @media (max-width: 768px) {
@@ -582,6 +731,39 @@ button.danger:hover {
         margin: 10px 0;
         text-align: center;
     }
+    
+    .list-view-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+        padding: 15px;
+    }
+    
+    .list-event-item {
+        flex-direction: column;
+        gap: 12px;
+        padding: 12px;
+    }
+    
+    .list-event-time {
+        min-width: auto;
+        width: 100%;
+    }
+    
+    .list-event-actions {
+        flex-direction: row;
+        justify-content: center;
+        min-width: auto;
+    }
+    
+    .list-day-title {
+        font-size: 16px;
+        padding: 10px 15px;
+    }
+    
+    .list-events {
+        padding: 0 10px;
+    }
 }
 
 /* Extra small screens (phones in portrait) */
@@ -635,5 +817,25 @@ button.danger:hover {
     
     h1 {
         font-size: 18px;
+    }
+    
+    .list-event-item {
+        padding: 10px;
+        gap: 10px;
+    }
+    
+    .list-event-title {
+        font-size: 14px;
+    }
+    
+    .list-event-venue,
+    .list-event-movie,
+    .list-event-movies {
+        font-size: 12px;
+    }
+    
+    .list-event-sections,
+    .list-event-tags {
+        font-size: 11px;
     }
 }

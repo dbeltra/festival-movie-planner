@@ -1,5 +1,5 @@
 {
-  "version": "2.1.8",
-  "buildDate": "2025-09-21",
-  "description": "Fixed toggle function to preserve SVG arrows instead of replacing with text icons"
+  "version": "2.1.12",
+  "buildDate": "2025-09-22",
+  "description": "Fixed My Festival Hours to show only selected events duration, not interested + selected"
 }

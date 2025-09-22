@@ -138,26 +138,20 @@
                 ⭐ Show Interested
               </button>
               <button onclick="showOnlySelected()" class="secondary">
-                ✓ Show Selected
-              </button>
-              <button onclick="showHiddenEvents()" class="secondary">
-                👻 Show Hidden
+                ✅ Show Selected
               </button>
               <div style="display: inline-flex; gap: 5px">
-                <button onclick="exportMyPlan()">📤 Export Text</button>
-                <button
-                  onclick="exportMyPlanJSON()"
-                  class="secondary"
-                  style="font-size: 12px; padding: 6px 10px"
-                >
-                  📤 JSON
-                </button>
+                <button onclick="exportMyPlan()">📤 Export Plan</button>
               </div>
               <button onclick="importMyPlan()" class="secondary">
                 📥 Import Plan
               </button>
-              <button onclick="window.print()" class="secondary">
-                🖨️ Print
+              <button
+                onclick="toggleListView()"
+                class="secondary"
+                id="listViewBtn"
+              >
+                📋 List View
               </button>
             </div>
           </div>
@@ -189,78 +183,58 @@
               🔄 Unhide All
             </button>
           </div>
-        </div>
-      </div>
-
-      <div class="controls-section collapsible">
-        <div class="controls-header" onclick="toggleSection('legend')">
-          <h3 style="margin: 0; color: #303030ff">🎨 Legend</h3>
-          <span class="collapse-icon rotated" id="legend-icon">
-            <svg
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="#000000"
-            >
-              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-              <g
-                id="SVGRepo_tracerCarrier"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              ></g>
-              <g id="SVGRepo_iconCarrier">
-                <path
-                  fill="#5C5F62"
-                  d="M13.098 8H6.902c-.751 0-1.172.754-.708 1.268L9.292 12.7c.36.399 1.055.399 1.416 0l3.098-3.433C14.27 8.754 13.849 8 13.098 8Z"
-                ></path>
-              </g>
-            </svg>
-          </span>
-        </div>
-        <div class="collapsible-content collapsed" id="legend-content">
-          <div class="legend">
-            <div class="legend-item">
-              <div
-                class="legend-color"
-                style="
-                  background: linear-gradient(
-                    135deg,
-                    rgb(244, 70, 117),
-                    rgb(231, 76, 96)
-                  );
-                "
-              ></div>
-              <span>Available Event</span>
-            </div>
-            <div class="legend-item">
-              <div
-                class="legend-color"
-                style="
-                  background: linear-gradient(135deg, #ffc107, #ffb300);
-                  border: 2px solid #fd7e14;
-                "
-              ></div>
-              <span>⭐ Interested</span>
-            </div>
-            <div class="legend-item">
-              <div
-                class="legend-color"
-                style="
-                  background: linear-gradient(135deg, #28a745, #20c997);
-                  border: 2px solid #17a2b8;
-                "
-              ></div>
-              <span>✓ Selected</span>
-            </div>
-            <div class="legend-item">
-              <div
-                class="legend-color"
-                style="background: linear-gradient(135deg, #6f42c1, #8e44ad)"
-              ></div>
-              <span>Multiple Movies</span>
-            </div>
-            <div class="legend-item">
-              <div class="legend-color" style="background: #6c757d"></div>
-              <span>❌ Hidden (click ❌ again to unhide)</span>
+          <div class="controls-row">
+            <div class="legend">
+              <div class="legend-item">
+                <div
+                  class="legend-color"
+                  style="
+                    background: linear-gradient(
+                      135deg,
+                      rgb(244, 70, 117),
+                      rgb(231, 76, 96)
+                    );
+                  "
+                ></div>
+                <span>Movie</span>
+              </div>
+              <div class="legend-item">
+                <div
+                  class="legend-color"
+                  style="
+                    background: linear-gradient(
+                      135deg,
+                      rgb(170, 40, 75),
+                      rgb(135, 28, 42)
+                    );
+                  "
+                ></div>
+                <span>Multiple Movies</span>
+              </div>
+              <div class="legend-item">
+                <div
+                  class="legend-color"
+                  style="
+                    background: linear-gradient(135deg, #ffc107, #ffb300);
+                    border: 2px solid #fd7e14;
+                  "
+                ></div>
+                <span>⭐ Interested</span>
+              </div>
+              <div class="legend-item">
+                <div
+                  class="legend-color"
+                  style="
+                    background: linear-gradient(135deg, #28a745, #20c997);
+                    border: 2px solid #17a2b8;
+                  "
+                ></div>
+                <span>✅ Selected</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-color" style="background: #6c757d"></div>
+                <span>❌ Hidden</span>
+              </div>
             </div>
           </div>
         </div>
