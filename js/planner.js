@@ -277,6 +277,174 @@ function exportMyPlan() {
   setTimeout(() => successMsg.remove(), 3000);
 }
 
+function exportToCalendar() {
+  const selectedEventsData = parsedData.filter((event) =>
+    selectedEvents.has(getEventId(event))
+  );
+
+  if (selectedEventsData.length === 0) {
+    const errorMsg = document.createElement('div');
+    errorMsg.className = 'error';
+    errorMsg.textContent =
+      '❌ No selected events to export. Mark some events as selected (✓) first.';
+    document.querySelector('.controls-section').appendChild(errorMsg);
+    setTimeout(() => errorMsg.remove(), 3000);
+    return;
+  }
+
+  // Generate ICS content
+  let icsContent = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Festival Schedule Planner//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+  ];
+
+  selectedEventsData.forEach((event) => {
+    const startDateTime = createCalendarDateTime(event);
+    const endDateTime = createCalendarEndDateTime(event);
+    const uid = generateUID(event);
+
+    // Clean up text for calendar
+    const title = cleanCalendarText(event.event);
+    const location = cleanCalendarText(event.venue || '');
+    const description = createEventDescription(event);
+
+    icsContent.push(
+      'BEGIN:VEVENT',
+      `UID:${uid}`,
+      `DTSTART:${startDateTime}`,
+      `DTEND:${endDateTime}`,
+      `SUMMARY:${title}`,
+      `LOCATION:${location}`,
+      `DESCRIPTION:${description}`,
+      'STATUS:CONFIRMED',
+      'TRANSP:OPAQUE',
+      'END:VEVENT'
+    );
+  });
+
+  icsContent.push('END:VCALENDAR');
+
+  // Create and download the ICS file
+  const icsString = icsContent.join('\r\n');
+  const blob = new Blob([icsString], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'festival-schedule.ics';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  // Show success message
+  const successMsg = document.createElement('div');
+  successMsg.className = 'success';
+  successMsg.innerHTML = `
+    ✅ Calendar exported successfully!<br>
+    📅 ${selectedEventsData.length} selected events exported to festival-schedule.ics<br>
+    💡 Import this file into Google Calendar, Apple Calendar, or Outlook
+  `;
+  document.querySelector('.controls-section').appendChild(successMsg);
+  setTimeout(() => successMsg.remove(), 5000);
+}
+
+function createCalendarDateTime(event) {
+  // Parse the date and time
+  const dayMap = {
+    Dilluns: 'Monday',
+    Dimarts: 'Tuesday',
+    Dimecres: 'Wednesday',
+    Dijous: 'Thursday',
+    Divendres: 'Friday',
+    Dissabte: 'Saturday',
+    Diumenge: 'Sunday',
+  };
+
+  // Assuming the festival is in October 2024 (adjust year/month as needed)
+  const year = 2024;
+  const month = 10; // October
+  const day = parseInt(event.date);
+
+  const [hours, minutes] = event.time.split(':').map(Number);
+
+  // Create date in local timezone, then convert to UTC for ICS
+  const eventDate = new Date(year, month - 1, day, hours, minutes);
+
+  // Format as YYYYMMDDTHHMMSSZ (UTC)
+  return eventDate.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+}
+
+function createCalendarEndDateTime(event) {
+  const dayMap = {
+    Dilluns: 'Monday',
+    Dimarts: 'Tuesday',
+    Dimecres: 'Wednesday',
+    Dijous: 'Thursday',
+    Divendres: 'Friday',
+    Dissabte: 'Saturday',
+    Diumenge: 'Sunday',
+  };
+
+  const year = 2024;
+  const month = 10; // October
+  const day = parseInt(event.date);
+
+  const [hours, minutes] = event.time.split(':').map(Number);
+  const durationMinutes = event.durationMinutes || 90; // Default 90 minutes if not specified
+
+  const eventDate = new Date(year, month - 1, day, hours, minutes);
+  eventDate.setMinutes(eventDate.getMinutes() + durationMinutes);
+
+  return eventDate.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+}
+
+function generateUID(event) {
+  // Create a unique identifier for the event
+  const eventId = getEventId(event);
+  return `${eventId}@festival-planner.local`;
+}
+
+function cleanCalendarText(text) {
+  // Escape special characters for ICS format
+  return text
+    .replace(/\\/g, '\\\\')
+    .replace(/;/g, '\\;')
+    .replace(/,/g, '\\,')
+    .replace(/\n/g, '\\n')
+    .replace(/\r/g, '');
+}
+
+function createEventDescription(event) {
+  let description = [];
+
+  if (event.movie) {
+    description.push(`Movie: ${event.movie}`);
+  }
+
+  if (event.movies && event.movies.length > 1) {
+    description.push(`Movies: ${event.movies.join(', ')}`);
+  }
+
+  if (event.duration) {
+    description.push(`Duration: ${event.duration}`);
+  }
+
+  if (event.sections && event.sections.length > 0) {
+    description.push(`Sections: ${event.sections.join(', ')}`);
+  }
+
+  if (event.special_tags && event.special_tags.length > 0) {
+    description.push(`Tags: ${event.special_tags.join(', ')}`);
+  }
+
+  description.push('\\n\\nExported from Festival Schedule Planner');
+
+  return cleanCalendarText(description.join('\\n'));
+}
+
 function importMyPlan() {
   const fileInput = document.getElementById('importFileInput');
   fileInput.click();

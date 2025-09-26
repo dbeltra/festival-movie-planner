@@ -1,5 +1,5 @@
 {
-  "version": "2.1.12",
-  "buildDate": "2025-09-22",
-  "description": "Fixed My Festival Hours to show only selected events duration, not interested + selected"
+  "version": "2.1.13",
+  "buildDate": "2025-09-26",
+  "description": "Added Google Calendar export functionality for selected events as ICS file"
 }
