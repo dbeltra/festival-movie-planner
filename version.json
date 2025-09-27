@@ -1,5 +1,5 @@
 {
-  "version": "2.1.13",
-  "buildDate": "2025-09-26",
-  "description": "Added Google Calendar export functionality for selected events as ICS file"
+  "version": "2.1.14",
+  "buildDate": "2025-09-27",
+  "description": "Fixed calendar export to use current year instead of hardcoded 2024, with smart year detection"
 }

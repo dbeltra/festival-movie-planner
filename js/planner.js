@@ -363,11 +363,21 @@ function createCalendarDateTime(event) {
     Diumenge: 'Sunday',
   };
 
-  // Assuming the festival is in October 2024 (adjust year/month as needed)
-  const year = 2024;
-  const month = 10; // October
-  const day = parseInt(event.date);
+  // Smart year/month detection
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = currentDate.getMonth() + 1; // getMonth() returns 0-11
 
+  // Default to October for Sitges Film Festival
+  let month = 10;
+  let year = currentYear;
+
+  // If we're past October in the current year, assume next year's festival
+  if (currentMonth > 10) {
+    year = currentYear + 1;
+  }
+
+  const day = parseInt(event.date);
   const [hours, minutes] = event.time.split(':').map(Number);
 
   // Create date in local timezone, then convert to UTC for ICS
@@ -388,10 +398,19 @@ function createCalendarEndDateTime(event) {
     Diumenge: 'Sunday',
   };
 
-  const year = 2024;
-  const month = 10; // October
-  const day = parseInt(event.date);
+  // Smart year/month detection (same logic as start time)
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = currentDate.getMonth() + 1;
 
+  let month = 10; // October for Sitges Film Festival
+  let year = currentYear;
+
+  if (currentMonth > 10) {
+    year = currentYear + 1;
+  }
+
+  const day = parseInt(event.date);
   const [hours, minutes] = event.time.split(':').map(Number);
   const durationMinutes = event.durationMinutes || 90; // Default 90 minutes if not specified
 
